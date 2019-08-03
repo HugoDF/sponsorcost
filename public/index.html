@@ -7,7 +7,7 @@
   <meta name="description" content="Blog and Newsletter Sponsorship/Advertising Calculator">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="manifest" href="site.webmanifest">
+  <!-- <link rel="manifest" href="site.webmanifest"> -->
   <link rel="apple-touch-icon" href="icon.png">
   <!-- Place favicon.ico in the root directory -->
 
@@ -19,99 +19,154 @@
   <!--[if IE]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
   <![endif]-->
-  <div class="container mx-auto max-w-xl py-10">
-    <h1 class="font-semibold my-5 text-xl">SponsorCost</h1>
-    <h2 class="font-normal my-2 text-lg">Blog and Newsletter Sponsorship/Advertising Calculator</h2>
+  <section class="container mx-auto max-w-xl py-10">
+    <h1 class="font-semibold my-4 text-xl">SponsorCost</h1>
+    <h2 class="font-semibold text-md mb-4 text-gray-700">Blog and Newsletter Sponsorship/Advertising Calculator</h2>
 
-    <p class="mb-2">
-      There's a lambda generating random emoji 👍 at
-      <a
-        class="text-blue-500 hover:text-blue-700 underline"
-        href="/.netlify/functions/emoji">
-        /.netlify/functions/emoji
-      </a>
-    </p>
-    <p class="mb-2">
-      This page is just HTML with inline scripts,
-      there's a function that intercepts form submits and
-      sends them using <code>fetch</code> instead.
-    </p>
-    <p class="mb-2">
-      There's also a helper to get field values using their name,
-      <a
-        class="text-blue-500 hover:text-blue-700 underline"
-        href="https://github.com/HugoDF/netlify-lambda-tailwind-static-starter/blob/fc936bd76f201c90ade459a9ab73bf19fdab6aec/public/index.html#L65">
-        see <code>getFieldValue(form, fieldName)</code>
-        on GitHub</a>.
-    </p>
-    <p class="mb-2">This is a good starting point for quick Lambda demos, see the <a class="text-blue-500 hover:text-blue-700 underline" href="#development-environment-setup">Development Environment Setup</a> or the GitHub Repository <a class="text-blue-500 hover:text-blue-700 underline" href="https://github.com/HugoDF/netlify-lambda-tailwind-static-starter">github.com/HugoDF/netlify-lambda-tailwind-static-starter</a></p>
+    <section>
+      This page/site has <input
+        type="number"
+        name="pageviews"
+        id="pageviews"
+        class="text-lg inline"
+        value="30000"
+        step="100"
+        >
+      viewers a month, we think each 1000 eyeballs are worth
+      <label class="text-lg inline" for="cpm">$</label>
+      <input
+        type="number"
+        name="cpm"
+        id="cpm"
+        class="text-lg"
+        value="5"
+        step="0.5"
+      >
 
-    <div class="mx-auto max-w-xs mt-10">
-      <form
-        class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-        action="/.netlify/functions/emoji"
-        method="get">
-        <div class="flex items-center justify-between">
-          <button
-            class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit">
-            Try it
-          </button>
-        </div>
-      </form>
-    </div>
+      so sponsoring this page would cost
 
-    <section class="mt-10">
-      <h2 class="font-medium text-xl">Response:</h2>
+      <strong class="js-cost">$150</strong>
 
-      <div class="max-w-sm text-xs">
-        <code>
-          <pre id="response-area">
-          </pre>
-        </code>
+      <div class="my-4 text-center">
+        <button class="js-calculate-now bg-purple-500 text-white px-4 py-2 rounded-sm invisible">Calculate Now</button>
       </div>
     </section>
 
-    <section class="border-t border-solid border-gray-500 py-10 mt-10">
-
-      <h3 id="development-environment-setup" class="text-lg font-semibold mb-4">Development environment setup</h3>
-
-      <h4 class="font-semibold mb-2">A Yarn/npm scripts-based workflow.</h4>
-      <p class="mb-2">
-        The following scripts are available:
-      </p>
+    <h2 class="font-semibold text-md mb-4 text-gray-700">Sponsorship Calculation History</h2>
+    <section class="js-history flex flex-wrap">
     </section>
     <footer class="mt-10 px-8 text-sm">
-      This project was created from the <a class="text-blue-500 hover:text-blue-700 underline" href="https://github.com/HugoDF/netlify-lambda-tailwind-static-starter">netlify-lambda-tailwind-static-starter</a> project by <a class="text-blue-500 hover:text-blue-700 underline" href="https://twitter.com/@hugo__df">@hugo__df</a>.
+      This project was created from the <a class="text-blue-500 hover:text-blue-700 underline" href="https://github.com/HugoDF/netlify-lambda-tailwind-static-starter">netlify-lambda-tailwind-static-starter</a> template by <a class="text-blue-500 hover:text-blue-700 underline" href="https://twitter.com/@hugo__df">@hugo__df</a>.
     </footer>
   </div>
 
   <script>
     (function () {
-      function getFieldValue(form, field) {
-        return form[field].value
+      const defaultSponsorCostCalculations = [
+        { cpm: 1000, pageviews: 14000 },
+        { cpm: 750, pageviews: 22000 },
+        { cpm: 500, pageviews: 30000 }, // last is what's displayed
+      ]
+      const data = localStorage.getItem('sponsorCost')
+      const sponsorCostCalculations = data ? JSON.parse(data) : defaultSponsorCostCalculations;
+      const $history = document.querySelector('.js-history');
+      const $cpm = document.querySelector('#cpm');
+      const $pageviews = document.querySelector('#pageviews');
+      const $totalCost = document.querySelector('.js-cost');
+      const $calculatePrompt = document.querySelector('.js-calculate-now');
+
+      function insert(node, html) {
+        node.innerHTML = html;
       }
-      const form = document.querySelector('form');
-      const responseArea = document.querySelector('#response-area');
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const url = form.action;
-        const verb = (form.method || 'post').toUpperCase();
-        fetch(url, {
-          method: verb,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }).then(function (res) {
-          if(res.ok) {
-            return res.json();
+
+      function computeCost(cpm, pageviews) {
+        return cpm / 100 * pageviews / 1000;
+      }
+
+      function renderHistory() {
+        return sponsorCostCalculations.slice(0).reverse().map(({ cpm, pageviews }) => {
+          const displayCpm = cpm / 100;
+          const total = computeCost(cpm, pageviews);
+          return `<div
+            class="js-history-entry cursor-pointer p-2 text-center flex flex-col sm:w-full md:w-1/3 mb-4"
+            data-cpm="${cpm}"
+            data-pageviews="${pageviews}"
+            data-total-cost="${total}"
+          >
+            <div class="shadow-lg p-4">
+              <div class="text-gray-700 text-base">
+                $${displayCpm.toFixed(2)} per 1000 :eyeballs:
+                <br />
+                ${pageviews.toLocaleString()} views (per month)
+              </div>
+              <div class="font-bold text-gray-700 text-lg mt-2">
+                Sponsorship cost: $${total.toLocaleString()}
+              </div>
+            </div>
+          </div>`
+        }).join('\n');
+      }
+
+      const render = () => insert($history, renderHistory());
+
+      render()
+
+      function updateForm(cpm, pageviews, totalCost) {
+        $cpm.value = (cpm / 100).toFixed(2)
+        $pageviews.value = pageviews
+        $totalCost.innerText = `$${totalCost.toLocaleString()}`
+      }
+      const HISTORY_ENTRY = 'HISTORY_ENTRY';
+      const CALCULATE = 'CALCULATE';
+      document.addEventListener('click', (event) => {
+        let type;
+
+        const target = event.path.find((node) => {
+          if (node && node.classList) {
+            if (node.classList.contains('js-history-entry')) {
+              type = HISTORY_ENTRY
+              return node;
+            }
+            if (node.classList.contains('js-calculate-now')) {
+              type = CALCULATE;
+              return node;
+            }
           }
-          throw new Error('Network response was not ok.');
-        }).then(function(json) {
-          responseArea.innerText = JSON.stringify(json, null, 2);
-        }).catch(function (error) {
-          responseArea.innerText = error.message
         })
+        if (target) {
+          switch(type) {
+            case HISTORY_ENTRY:{
+              const { cpm, pageviews, totalCost } = target.dataset;
+              updateForm(parseFloat(cpm), parseFloat(pageviews), parseFloat(totalCost));
+              break
+            }
+            case CALCULATE: {
+              const cpm = parseFloat($cpm.value) * 100;
+              const pageviews = parseFloat($pageviews.value);
+              sponsorCostCalculations.push({ cpm, pageviews })
+              render();
+              makeReadOnly();
+              const latestCalculation = sponsorCostCalculations[sponsorCostCalculations.length - 1]
+              updateForm(latestCalculation.cpm, latestCalculation.pageviews, computeCost(latestCalculation.cpm, latestCalculation.pageviews))
+            }
+
+          }
+        } else {
+          console.log('noop');
+        }
+      })
+
+      function makeEditing() {
+        $totalCost.innerText = '???';
+        $calculatePrompt.classList.remove('invisible');
+      }
+
+      function makeReadOnly() {
+        $calculatePrompt.classList.add('invisible');
+      }
+
+      document.addEventListener('change', (event) => {
+        makeEditing();
       })
     })()
   </script>
