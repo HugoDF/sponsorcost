@@ -67,8 +67,16 @@
         { cpm: 750, pageviews: 22000 },
         { cpm: 500, pageviews: 30000 }, // last is what's displayed
       ]
-      const data = localStorage.getItem('sponsorCost')
-      const sponsorCostCalculations = data ? JSON.parse(data) : defaultSponsorCostCalculations;
+      const data = {
+        get() {
+          const sponsorCost = localStorage.getItem('sponsorCost')
+          return sponsorCost ? JSON.parse(sponsorCost) : defaultSponsorCostCalculations;
+        },
+        set(sponsorCost) {
+          return localStorage.setItem('sponsorCost', JSON.stringify(sponsorCost));
+        }
+      }
+      const sponsorCostCalculations = data.get() ;
       const $history = document.querySelector('.js-history');
       const $cpm = document.querySelector('#cpm');
       const $pageviews = document.querySelector('#pageviews');
@@ -143,7 +151,8 @@
             case CALCULATE: {
               const cpm = parseFloat($cpm.value) * 100;
               const pageviews = parseFloat($pageviews.value);
-              sponsorCostCalculations.push({ cpm, pageviews })
+              sponsorCostCalculations.push({ cpm, pageviews });
+              data.set(sponsorCostCalculations);
               render();
               makeReadOnly();
               const latestCalculation = sponsorCostCalculations[sponsorCostCalculations.length - 1]
