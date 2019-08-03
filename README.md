@@ -1,9 +1,9 @@
-# Netlify Lambda Tailwind Static Starter demo
+# Sponsor Cost
 
-> A starter project with Netlify Lambda, Tailwind CSS and static pages.
+> Blog and Newsletter Sponsorship/Advertising Calculator
 
 <!-- Markdown snippet -->
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/HugoDF/netlify-lambda-tailwind-static-starter)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/HugoDF/sponsorcost)
 
 There's a lambda generating random emoji 👍 at [./src/lambda/emoji.js](./src/lambda/emoji.js)
 
